@@ -41,17 +41,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr  v-for="item in products" :key="item.id">
-              <td> {{item.category}}</td>
-              <td> {{item.title}}</td>
+            <tr>
+              <td></td>
+              <td></td>
               <td class="text-end"></td>
-                {{ item.origin_price }}
-              <td class="text-end">
-                {{ item.price }}
-              </td>
+              <td class="text-end"></td>
               <td>
-                <span v-if="item.is_enabled" class="text-success">啟用</span>
-                <span v-else>未啟用</span>
+                <span class="text-success">啟用</span>
+                <span>未啟用</span>
               </td>
               <td>
                 <div class="btn-group">
