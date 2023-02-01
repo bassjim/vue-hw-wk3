@@ -1,3 +1,4 @@
+let productModal = null;
 
 Vue.createApp({
     data(){
@@ -8,7 +9,7 @@ Vue.createApp({
             tempProduct:{
                 imageUrl:[],
             },
-            is_New:false,
+            isNew:false,
         };
     },
     methods:{   
@@ -22,12 +23,26 @@ Vue.createApp({
             .catch(err=>{
                 alert(err.response.data.message);
             })
+        },
+        openModel(){
+            productModal.show();
+        },
+        updateProducts(){           
+            const url = `${this.apiUrl}api/${this.api_path}/admin/product`;
+            axios.post(`${url}`,{data:this.tempProduct})
+            .then((res=>{
+                this.getProducts();
+                productModal.hide();//關閉Model
+            }))
         }
     },
     mounted(){
         const token = document.cookie.replace(/(?:(?:^|.*;\s*)myToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
         axios.defaults.headers.common['Authorization'] = token;
-        this.getProducts;
+        this.getProducts();
+
+        productModal = new bootstrap.Modal('#productModal');
+        
     }
 })
 .mount("#app")
