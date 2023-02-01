@@ -15,7 +15,7 @@
     <div id="app">
       <div class="container">
         <div class="text-end mt-4">
-          <button class="btn btn-primary" @click="openModel">
+          <button class="btn btn-primary" @click="openModel('create')">
             建立新的產品
           </button>
         </div>
@@ -56,10 +56,12 @@
               </td>
               <td>
                 <div class="btn-group">
-                  <button type="button" class="btn btn-outline-primary btn-sm">
+                  <button type="button" class="btn btn-outline-primary btn-sm"
+                  @click="openModel('edit',item)">
                     編輯
                   </button>
-                  <button type="button" class="btn btn-outline-danger btn-sm">
+                  <button type="button" class="btn btn-outline-danger btn-sm"
+                  @click="openModel('delete',item)">
                     刪除
                   </button>
                 </div>
@@ -89,18 +91,35 @@
                       <input type="text" class="form-control"
                         v-model="tempProduct.imageUrl"     placeholder="請輸入圖片連結">
                     </div>
-                    <img class="img-fluid" src="" alt="">
+                    <img class="img-fluid" :src="tempProduct.imageUrl" alt="">
                   </div>
                   <div>
-                    <button class="btn btn-outline-primary btn-sm d-block w-100">
+                    <h4>多圖設置</h4>
+                    <!--判斷tempProduct.imagesUrl 是一個陣列-->
+                    <div v-for="Array.isArray(tempProduct.imagesUrl)">
+                      <template v-for="(img,key) in tempProduct.imagesUrl" :key="key +1234">
+                        <input type="text" class="form-control"
+                        v-model="tempProduct.imagesUrl[key]">
+                        <img :src="tempProduct.imagesUrl[key]" alt="" class="img-fluid">
+                      </template>
+                    </div>
+                    
+                    <!--判斷新增刪除出現的時機-->
+                  </div>
+                  <div>
+                    <button class="btn btn-outline-primary btn-sm d-block w-100"
+                      v-if="
+                      !tempProduct.imagesUrl.length ||
+                      tempProduct.imagesUrl[tempProduct.imagesUrl.length - 1]"
+                      @click="tempProduct.imagesUrl.push('')">
                       新增圖片
                     </button>
-                  </div>
-                  <div v-else>
-                    <button class="btn btn-outline-danger btn-sm d-block w-100">
+                    <button class="btn btn-outline-danger btn-sm d-block w-100"
+                      v-else
+                      @click="tempProduct.imagesUrl.pop('')">
                       刪除圖片
                     </button>
-                  </div>
+                  </div>                  
                 </div>
                 <div class="col-sm-8">
                   <div class="mb-3">
@@ -181,13 +200,13 @@
             </div>
             <div class="modal-body">
               是否刪除
-              <strong class="text-danger"></strong> 商品(刪除後將無法恢復)。
+              <strong class="text-danger">{{tempProduct.title}}</strong> 商品(刪除後將無法恢復)。
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                 取消
               </button>
-              <button type="button" class="btn btn-danger">
+              <button type="button" class="btn btn-danger" @click="delProducts">
                 確認刪除
               </button>
             </div>

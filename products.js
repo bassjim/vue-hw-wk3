@@ -1,4 +1,5 @@
 let productModal = null;
+let delProductModal = null;
 
 Vue.createApp({
     data(){
@@ -7,12 +8,23 @@ Vue.createApp({
             api_path:'bassjim',
             products:[],
             tempProduct:{
-                imageUrl:[],
+                imagesUrl:[],
             },
             isNew:false,
         };
     },
-    methods:{   
+    methods:{  
+        checkAdmin() {
+            const url = `${this.apiUrl}/api/user/check`;
+            axios.post(url)
+              .then(() => {
+                this.getProducts();
+              })
+              .catch((err) => {
+                alert('登入失敗，將返回登入頁')
+                window.location = 'login.html';
+              })
+          }, 
         getProducts(){
             const url = `${this.apiUrl}api/${this.api_path}/admin/products/all`;
             axios.get(`${url}`)
@@ -24,25 +36,58 @@ Vue.createApp({
                 alert(err.response.data.message);
             })
         },
-        openModel(){
-            productModal.show();
+        openModel(status,item){
+            if(status === 'create'){
+                productModal.show()
+                this.isNew = true;
+                //帶入初始化資料
+                this.tempProduct = {
+                    imagesUrl: [],
+                };
+            }else if (status === 'edit'){
+                productModal.show();
+                this.isNew = false;
+                //會帶入當前要編輯的資料
+                this.tempProduct = {...item};
+            }else if (status === 'delete'){
+                delProductModal.show();
+                this.tempProduct = {...item};//等等id使用
+            }
         },
         updateProducts(){           
-            const url = `${this.apiUrl}api/${this.api_path}/admin/product`;
-            axios.post(`${url}`,{data:this.tempProduct})
+            let url = `${this.apiUrl}/api/${this.api_path}/admin/product`;
+            //用this.isNew判斷API如何運行
+            let method = 'post';
+            if(!this.isNew){
+                url = `${this.apiUrl}/api/${this.api_path}/admin/product/${this.tempProduct.id}`;
+                method = 'put';
+            }
+            axios[method](`${url}`,{data:this.tempProduct})
             .then((res=>{
                 this.getProducts();
                 productModal.hide();//關閉Model
             }))
+        },
+        delProducts(){
+            const url = `${this.apiUrl}/api/${this.api_path}/admin/product/${this.tempProduct.id}`;          
+            axios.delete(`${url}`)
+            .then(res => {
+                this.getProducts();
+                delProductModal.hide();//關閉Model
+            })
+            .catch(err => {
+                console.error(err); 
+            })
         }
     },
     mounted(){
         const token = document.cookie.replace(/(?:(?:^|.*;\s*)myToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
         axios.defaults.headers.common['Authorization'] = token;
+        this.checkAdmin();
         this.getProducts();
 
         productModal = new bootstrap.Modal('#productModal');
-        
+        delProductModal = new bootstrap.Modal('#delProductModal');
     }
 })
 .mount("#app")
