@@ -96,14 +96,13 @@
                   <div>
                     <h4>多圖設置</h4>
                     <!--判斷tempProduct.imagesUrl 是一個陣列-->
-                    <div v-for="Array.isArray(tempProduct.imagesUrl)">
+                    <div v-if="Array.isArray(tempProduct.imagesUrl)">
                       <template v-for="(img,key) in tempProduct.imagesUrl" :key="key +1234">
                         <input type="text" class="form-control"
                         v-model="tempProduct.imagesUrl[key]">
                         <img :src="tempProduct.imagesUrl[key]" alt="" class="img-fluid">
                       </template>
-                    </div>
-                    
+                    </div>                    
                     <!--判斷新增刪除出現的時機-->
                   </div>
                   <div>
