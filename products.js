@@ -78,6 +78,12 @@ Vue.createApp({
             .catch(err => {
                 console.error(err); 
             })
+        },
+        creatImg(){
+            //當多圖的地方沒有東西
+            //建立一個陣列初始化，並且放入一筆空的資料
+            this.temproduct.imagesUrl = [];
+            this.temproduct.imagesUrl.push('');
         }
     },
     mounted(){
